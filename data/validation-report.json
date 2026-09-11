@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-09-11T05:07:05.804Z",
+  "summary": {
+    "pokemonCount": 721,
+    "tmCount": 113,
+    "mtCount": 49,
+    "pokemonPagesFetched": 721,
+    "pokemonPagesFailed": 0,
+    "issues": 5
+  },
+  "issues": [
+    {
+      "severity": "info",
+      "category": "cobertura",
+      "message": "O TM \"TM109 - Beat Up\" não é aprendido por nenhum Pokémon coletado (1ª a 6ª geração)."
+    },
+    {
+      "severity": "info",
+      "category": "cobertura",
+      "message": "O TM \"TM115 - Bullet Seed\" não é aprendido por nenhum Pokémon coletado (1ª a 6ª geração)."
+    },
+    {
+      "severity": "info",
+      "category": "cobertura",
+      "message": "O TM \"TM116 - Metal Claw\" não é aprendido por nenhum Pokémon coletado (1ª a 6ª geração)."
+    },
+    {
+      "severity": "info",
+      "category": "cobertura",
+      "message": "O TM \"TM117 - Fury Cutter\" não é aprendido por nenhum Pokémon coletado (1ª a 6ª geração)."
+    },
+    {
+      "severity": "info",
+      "category": "cobertura",
+      "message": "O TM \"TM118 - Night Shade\" não é aprendido por nenhum Pokémon coletado (1ª a 6ª geração)."
+    }
+  ]
+}

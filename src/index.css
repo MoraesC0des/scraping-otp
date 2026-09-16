@@ -68,33 +68,56 @@ input {
   color: var(--text-muted);
 }
 
-.app-nav {
+/* Barra de aviso superior (grudada no topo, estilo "anúncio" de ecommerce) */
+
+.app-announce {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  padding: 10px 16px;
+  text-align: center;
+  background:
+    radial-gradient(700px 90px at 50% -30px, rgba(255, 204, 51, 0.22), transparent 70%),
+    var(--surface-2);
+  border-bottom: 2px solid var(--accent);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.app-announce-text {
+  margin: 0;
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-top: 14px;
-}
-
-.nav-tab {
-  border: 1px solid var(--border);
-  background: var(--surface);
   color: var(--text-muted);
-  border-radius: 999px;
-  padding: 8px 18px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
-.nav-tab:hover {
-  border-color: var(--accent);
+.app-announce-label {
+  font-weight: 600;
+}
+
+.app-announce-name {
+  color: #0b1020;
+  background: linear-gradient(120deg, #ffcc33, #ff9d5c);
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: 0.4px;
+  padding: 3px 14px;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(255, 204, 51, 0.35);
+}
+
+.app-announce-sep {
+  font-weight: 600;
   color: var(--text);
 }
 
-.nav-tab-active {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #0b1020;
+.app-announce-world {
+  font-weight: 700;
+  color: var(--tm);
 }
 
 .app-main {
@@ -105,65 +128,42 @@ input {
 }
 
 .app-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
   text-align: center;
   color: var(--text-muted);
   font-size: 0.85rem;
 }
 
-.app-footer code {
-  color: var(--accent);
+.footer-by {
+  margin: 0;
 }
 
-/* ---------- Busca combinada ---------- */
-
-.pokemon-selector {
-  position: relative;
-}
-
-.search-field {
+.footer-links {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 0 18px;
-  height: 48px;
-  box-shadow: var(--shadow);
 }
 
-.search-field:focus-within {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-soft);
+.footer-links a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
 }
 
-.search-field span[aria-hidden] {
-  font-size: 1rem;
-  opacity: 0.8;
+.footer-links a:hover {
+  text-decoration: underline;
 }
 
-.search-field input {
-  flex: 1;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  color: var(--text);
-  font-size: 1rem;
+.footer-sep {
+  color: var(--border);
+  font-weight: 700;
 }
 
-.search-field input::placeholder {
-  color: var(--text-muted);
-}
-
-.clear-input {
-  background: transparent;
-  border: 0;
-  color: var(--text-muted);
-  font-size: 1.3rem;
-  cursor: pointer;
-  padding: 4px 8px;
-  line-height: 1;
-}
+/* ---------- Dropdown de resultados de busca (TM/MT) ---------- */
 
 .search-results {
   position: absolute;
@@ -180,15 +180,6 @@ input {
   box-shadow: var(--shadow);
   max-height: 380px;
   overflow: auto;
-}
-
-.search-group-label {
-  padding: 8px 12px 4px;
-  color: var(--text-muted);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
 }
 
 .search-results button {
@@ -239,21 +230,7 @@ input {
   font-size: 0.92rem;
 }
 
-/* ---------- Seleção (chips) ---------- */
-
-.selection-hint {
-  color: var(--text-muted);
-  text-align: center;
-  margin: 8px 0;
-}
-
-.selected-pokemon {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
-  min-height: 34px;
-}
+/* ---------- Chips de filtros selecionados ---------- */
 
 .chip {
   display: inline-flex;
@@ -265,12 +242,6 @@ input {
   padding: 6px 8px 6px 14px;
   font-weight: 600;
   font-size: 0.92rem;
-}
-
-.chip-idx {
-  color: var(--text-muted);
-  font-weight: 500;
-  font-size: 0.8rem;
 }
 
 .chip button {
@@ -288,184 +259,6 @@ input {
 .chip button:hover {
   color: var(--danger);
   background: rgba(255, 107, 107, 0.15);
-}
-
-/* ---------- Painel de resultados (fixo) ---------- */
-
-.result-hint {
-  color: var(--text-muted);
-  text-align: center;
-  margin: 8px 0;
-}
-
-.result-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: var(--shadow);
-}
-
-.result-columns {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  align-items: start;
-}
-
-.result-column {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 14px;
-}
-
-.result-column-title {
-  margin: 0;
-  font-size: 1rem;
-  text-align: center;
-}
-
-.result-body {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.result-subtitle {
-  margin: 0;
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  text-align: center;
-}
-
-/* Lista de Pokémon (grade) */
-
-.explorer-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 8px;
-}
-
-.explorer-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 10px;
-  background: var(--surface-2);
-  border-radius: 12px;
-}
-
-.explorer-item-info {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  overflow: hidden;
-}
-
-.explorer-item-info .pokemon-item-name {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.explorer-add {
-  margin-left: auto;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--accent);
-  border-radius: 999px;
-  padding: 4px 10px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.8rem;
-  white-space: nowrap;
-}
-
-.explorer-add:hover:not(:disabled) {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-}
-
-.explorer-add:disabled {
-  color: var(--mt);
-  border-color: rgba(124, 232, 124, 0.4);
-  cursor: default;
-}
-
-/* Lista de TMs/MTs */
-
-.result-moves {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 10px;
-}
-
-.result-move {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
-  padding: 12px 14px;
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text);
-  cursor: pointer;
-  text-align: left;
-  transition:
-    transform 0.12s ease,
-    border-color 0.12s ease;
-}
-
-.result-move:hover:not(:disabled) {
-  transform: translateY(-2px);
-  border-color: var(--accent);
-}
-
-.result-move:disabled {
-  cursor: default;
-  border-color: rgba(124, 232, 124, 0.4);
-}
-
-.result-move .move-card-name {
-  color: var(--accent);
-}
-
-.move-card-id {
-  font-weight: 800;
-  font-size: 0.85rem;
-  letter-spacing: 0.5px;
-  color: var(--tm);
-}
-
-.badge-mt {
-  color: var(--mt);
-  letter-spacing: 1px;
-}
-
-.move-card-name {
-  font-size: 1.05rem;
-  font-weight: 700;
-}
-
-.move-card-count {
-  color: var(--text-muted);
-  font-size: 0.78rem;
-  margin-top: 4px;
 }
 
 /* ---------- Sprite ---------- */
@@ -490,24 +283,6 @@ input {
   font-size: 1.4rem;
 }
 
-/* ---------- Responsividade ---------- */
-
-@media (max-width: 700px) {
-  .result-columns {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 560px) {
-  .explorer-list {
-    grid-template-columns: 1fr;
-  }
-
-  .result-moves {
-    grid-template-columns: 1fr;
-  }
-}
-
 /* ---------- Loja de Pokémon ---------- */
 
 .store {
@@ -527,10 +302,6 @@ input {
   box-shadow: var(--shadow);
 }
 
-.store-search input {
-  flex: 1;
-}
-
 .store-filter {
   display: flex;
   align-items: center;
@@ -544,19 +315,31 @@ input {
   min-width: 64px;
 }
 
-.store-filter select {
+/* Seletor padronizado (seta vetorial única, centralizada) */
+
+.store-filter select,
+.sort-row select {
+  appearance: none;
+  -webkit-appearance: none;
   flex: 1;
   min-width: 0;
-  background: var(--surface-2);
+  height: 36px;
+  background-color: var(--surface-2);
   color: var(--text);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 8px 10px;
+  padding: 0 34px 0 12px;
   font: inherit;
+  font-size: 0.88rem;
   cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239fb0cc' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px 12px;
 }
 
-.store-filter select:focus {
+.store-filter select:focus,
+.sort-row select:focus {
   outline: 0;
   border-color: var(--accent);
 }
@@ -657,7 +440,9 @@ input {
 .store-card-abilities {
   display: flex;
   flex-wrap: wrap;
+  align-content: flex-start;
   gap: 4px;
+  min-height: 18px;
 }
 
 .ability-badge {
@@ -724,28 +509,11 @@ input {
   gap: 6px;
 }
 
-.sort-row select {
-  flex: 1;
-  min-width: 0;
-  background: var(--surface-2);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 6px 8px;
-  font: inherit;
-  cursor: pointer;
-}
-
-.sort-row select:focus {
-  outline: 0;
-  border-color: var(--accent);
-}
-
 .sort-dir,
 .sort-remove {
   flex-shrink: 0;
-  width: 34px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border: 1px solid var(--border);
   background: transparent;
   color: var(--accent);
@@ -806,9 +574,14 @@ input {
   gap: 12px;
 }
 
+.store-grid li {
+  display: flex;
+}
+
 .store-card {
   position: relative;
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 8px;
   background: var(--surface);
@@ -851,6 +624,7 @@ input {
   display: flex;
   align-items: center;
   gap: 10px;
+  min-height: 64px;
 }
 
 .store-card-head .sprite {

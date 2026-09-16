@@ -39,7 +39,8 @@ export function statValue(pokemon: Pokemon, key: StatKey): number | null {
   if (!pokemon.stats) return null;
   if (key === 'total') {
     const s = pokemon.stats;
-    return s.hp + s.attack + s.defense + s.spAttack + s.spDefense + s.speed;
+    const raw = s.hp + s.attack + s.defense + s.spAttack + s.spDefense + s.speed;
+    return Math.round(raw * 100) / 100;
   }
   return pokemon.stats[key];
 }

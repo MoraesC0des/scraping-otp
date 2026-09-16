@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Dataset, Move, Pokemon } from '../types';
-import { pokemonMatchesQuery } from '../utils/compatibility';
 import { comparePokemon } from '../utils/stats';
 import type { SortCriterion } from '../utils/stats';
 import { StoreToolbar } from '../components/StoreToolbar';
@@ -17,17 +16,11 @@ const PAGE_SIZE = 90;
 
 function computeFiltered(
   pokemon: Pokemon[],
-  query: string,
-  generation: 'all' | number,
   moves: Move[],
   abilities: string[],
   criteria: SortCriterion[],
 ): Pokemon[] {
-  let list: Pokemon[] = pokemon.filter((p) => pokemonMatchesQuery(p, query));
-
-  if (generation !== 'all') {
-    list = list.filter((p) => p.generation === generation);
-  }
+  let list: Pokemon[] = pokemon;
 
   if (moves.length > 0) {
     list = list.filter((p) => moves.every((m) => m.pokemonIds.includes(p.id)));
@@ -41,23 +34,19 @@ function computeFiltered(
 }
 
 export function Store({ dataset, selection }: StoreProps) {
-  const [query, setQuery] = useState('');
-  const [generation, setGeneration] = useState<'all' | number>('all');
   const [moveFilters, setMoveFilters] = useState<Move[]>([]);
   const [abilityFilters, setAbilityFilters] = useState<string[]>([]);
   const [criteria, setCriteria] = useState<SortCriterion[]>([{ key: 'id', dir: 'asc' }]);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const filtered = useMemo(
-    () => computeFiltered(dataset.pokemon, query, generation, moveFilters, abilityFilters, criteria),
-    [dataset.pokemon, query, generation, moveFilters, abilityFilters, criteria],
+    () => computeFiltered(dataset.pokemon, moveFilters, abilityFilters, criteria),
+    [dataset.pokemon, moveFilters, abilityFilters, criteria],
   );
 
   const handleMoveFiltersChange = (moves: Move[]): void => {
     const resultCount = computeFiltered(
       dataset.pokemon,
-      query,
-      generation,
       moves,
       abilityFilters,
       criteria,
@@ -70,8 +59,6 @@ export function Store({ dataset, selection }: StoreProps) {
   const handleAbilityFiltersChange = (abilities: string[]): void => {
     const resultCount = computeFiltered(
       dataset.pokemon,
-      query,
-      generation,
       moveFilters,
       abilities,
       criteria,
@@ -94,7 +81,7 @@ export function Store({ dataset, selection }: StoreProps) {
 
   useEffect(() => {
     setVisibleCount(PAGE_SIZE);
-  }, [query, generation, moveFilters, abilityFilters, criteria]);
+  }, [moveFilters, abilityFilters, criteria]);
 
   const visible = filtered.slice(0, visibleCount);
   const remaining = filtered.length - visible.length;
@@ -104,10 +91,6 @@ export function Store({ dataset, selection }: StoreProps) {
     <section className="store" aria-label="Loja de Pokémon">
       <StoreToolbar
         dataset={dataset}
-        query={query}
-        onQueryChange={setQuery}
-        generation={generation}
-        onGenerationChange={setGeneration}
         selectedMoves={moveFilters}
         onMovesChange={handleMoveFiltersChange}
         selectedAbilities={abilityFilters}

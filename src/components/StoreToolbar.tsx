@@ -10,10 +10,6 @@ import type { SortCriterion, StatKey } from '../utils/stats';
 
 interface StoreToolbarProps {
   dataset: Dataset;
-  query: string;
-  onQueryChange: (query: string) => void;
-  generation: 'all' | number;
-  onGenerationChange: (generation: 'all' | number) => void;
   selectedMoves: Move[];
   onMovesChange: (moves: Move[]) => void;
   selectedAbilities: string[];
@@ -22,18 +18,12 @@ interface StoreToolbarProps {
   onCriteriaChange: (criteria: SortCriterion[]) => void;
 }
 
-const GENERATIONS = [1, 2, 3, 4, 5, 6];
-
 function moveDisplay(move: Move): string {
   return move.type === 'TM' ? `${move.id} · ${move.name}` : `MT · ${move.name}`;
 }
 
 export function StoreToolbar({
   dataset,
-  query,
-  onQueryChange,
-  generation,
-  onGenerationChange,
   selectedMoves,
   onMovesChange,
   selectedAbilities,
@@ -87,35 +77,6 @@ export function StoreToolbar({
 
   return (
     <div className="store-toolbar">
-      <label className="search-field store-search">
-        <span aria-hidden="true">🔎</span>
-        <input
-          type="search"
-          placeholder="Filtrar por nome ou nº..."
-          value={query}
-          autoComplete="off"
-          onChange={(event) => onQueryChange(event.target.value)}
-        />
-      </label>
-
-      <label className="store-filter">
-        <span className="store-filter-label">Geração</span>
-        <select
-          value={String(generation)}
-          onChange={(event) => {
-            const value = event.target.value;
-            onGenerationChange(value === 'all' ? 'all' : Number(value));
-          }}
-        >
-          <option value="all">Todas</option>
-          {GENERATIONS.map((g) => (
-            <option key={g} value={g}>
-              Geração {g}
-            </option>
-          ))}
-        </select>
-      </label>
-
       <div className="store-filter store-filter-move">
         <span className="store-filter-label">TMs/MTs</span>
         <div className="move-multi">

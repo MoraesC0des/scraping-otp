@@ -1,9 +1,10 @@
-import { StrictMode, useState } from 'react';
+import { StrictMode, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Home } from './pages/Home';
 import { Store } from './pages/Store';
 import { loadDataset } from './dataLoader';
 import { useSelection } from './hooks/useSelection';
+import { trackAppOpen } from './analytics';
 import './index.css';
 
 type Page = 'finder' | 'loja';
@@ -12,6 +13,10 @@ function App() {
   const dataset = loadDataset();
   const selection = useSelection(dataset);
   const [page, setPage] = useState<Page>('finder');
+
+  useEffect(() => {
+    void trackAppOpen();
+  }, []);
 
   return (
     <div className="app">

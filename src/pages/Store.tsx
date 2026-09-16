@@ -6,6 +6,7 @@ import type { SortCriterion } from '../utils/stats';
 import { StoreToolbar } from '../components/StoreToolbar';
 import { PokemonStoreCard } from '../components/PokemonStoreCard';
 import type { Selection } from '../hooks/useSelection';
+import { trackFilterUsed, trackPokemonClicked } from '../analytics';
 
 interface StoreProps {
   dataset: Dataset;
@@ -13,6 +14,31 @@ interface StoreProps {
 }
 
 const PAGE_SIZE = 90;
+
+function computeFiltered(
+  pokemon: Pokemon[],
+  query: string,
+  generation: 'all' | number,
+  moves: Move[],
+  abilities: string[],
+  criteria: SortCriterion[],
+): Pokemon[] {
+  let list: Pokemon[] = pokemon.filter((p) => pokemonMatchesQuery(p, query));
+
+  if (generation !== 'all') {
+    list = list.filter((p) => p.generation === generation);
+  }
+
+  if (moves.length > 0) {
+    list = list.filter((p) => moves.every((m) => m.pokemonIds.includes(p.id)));
+  }
+
+  if (abilities.length > 0) {
+    list = list.filter((p) => abilities.every((a) => p.abilities.includes(a)));
+  }
+
+  return [...list].sort((a, b) => comparePokemon(a, b, criteria));
+}
 
 export function Store({ dataset, selection }: StoreProps) {
   const [query, setQuery] = useState('');
@@ -22,23 +48,44 @@ export function Store({ dataset, selection }: StoreProps) {
   const [criteria, setCriteria] = useState<SortCriterion[]>([{ key: 'id', dir: 'asc' }]);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
-  const filtered = useMemo(() => {
-    let list: Pokemon[] = dataset.pokemon.filter((p) => pokemonMatchesQuery(p, query));
+  const filtered = useMemo(
+    () => computeFiltered(dataset.pokemon, query, generation, moveFilters, abilityFilters, criteria),
+    [dataset.pokemon, query, generation, moveFilters, abilityFilters, criteria],
+  );
 
-    if (generation !== 'all') {
-      list = list.filter((p) => p.generation === generation);
-    }
+  const handleMoveFiltersChange = (moves: Move[]): void => {
+    const resultCount = computeFiltered(
+      dataset.pokemon,
+      query,
+      generation,
+      moves,
+      abilityFilters,
+      criteria,
+    ).length;
+    setMoveFilters(moves);
+    const tm = moves.map((m) => m.id).join(', ');
+    void trackFilterUsed({ tm, resultCount });
+  };
 
-    if (moveFilters.length > 0) {
-      list = list.filter((p) => moveFilters.every((m) => m.pokemonIds.includes(p.id)));
-    }
+  const handleAbilityFiltersChange = (abilities: string[]): void => {
+    const resultCount = computeFiltered(
+      dataset.pokemon,
+      query,
+      generation,
+      moveFilters,
+      abilities,
+      criteria,
+    ).length;
+    setAbilityFilters(abilities);
+    const ability = abilities.join(', ');
+    const tm = moveFilters.map((m) => m.id).join(', ');
+    void trackFilterUsed({ tm, ability, resultCount });
+  };
 
-    if (abilityFilters.length > 0) {
-      list = list.filter((p) => abilityFilters.every((a) => p.abilities.includes(a)));
-    }
-
-    return [...list].sort((a, b) => comparePokemon(a, b, criteria));
-  }, [dataset.pokemon, query, generation, moveFilters, abilityFilters, criteria]);
+  const handleAddPokemon = (pokemon: Pokemon): void => {
+    void trackPokemonClicked(pokemon.name);
+    selection.selectPokemon(pokemon);
+  };
 
   const selectedIds = useMemo(
     () => new Set(selection.selectedPokemon.map((p) => p.id)),
@@ -62,9 +109,9 @@ export function Store({ dataset, selection }: StoreProps) {
         generation={generation}
         onGenerationChange={setGeneration}
         selectedMoves={moveFilters}
-        onMovesChange={setMoveFilters}
+        onMovesChange={handleMoveFiltersChange}
         selectedAbilities={abilityFilters}
-        onAbilitiesChange={setAbilityFilters}
+        onAbilitiesChange={handleAbilityFiltersChange}
         criteria={criteria}
         onCriteriaChange={setCriteria}
       />
@@ -91,7 +138,7 @@ export function Store({ dataset, selection }: StoreProps) {
                 <PokemonStoreCard
                   pokemon={pokemon}
                   selected={selectedIds.has(pokemon.id)}
-                  onAdd={selection.selectPokemon}
+                  onAdd={handleAddPokemon}
                 />
               </li>
             ))}

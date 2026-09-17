@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Dataset, Move } from '../types';
 import { moveKey, searchMoves } from '../utils/compatibility';
 import { abilityOptions } from '../utils/abilities';
+import { trackTmSearch } from '../analytics';
 import {
   STAT_OPTIONS,
   nextCriterion,
@@ -32,8 +33,23 @@ export function StoreToolbar({
   onCriteriaChange,
 }: StoreToolbarProps) {
   const [moveQuery, setMoveQuery] = useState('');
+  const lastTrackedQuery = useRef('');
 
   const abilities = useMemo(() => abilityOptions(dataset), [dataset]);
+
+  useEffect(() => {
+    const q = moveQuery.trim();
+    if (!q) {
+      lastTrackedQuery.current = '';
+      return;
+    }
+    const timer = setTimeout(() => {
+      if (q === lastTrackedQuery.current) return;
+      lastTrackedQuery.current = q;
+      void trackTmSearch({ query: q, resultCount: searchMoves(dataset.moves, q).length });
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [moveQuery, dataset.moves]);
 
   const toggleAbility = (ability: string): void => {
     if (selectedAbilities.includes(ability)) {

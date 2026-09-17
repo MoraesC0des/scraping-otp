@@ -41,14 +41,8 @@ O site está publicado e funcional: [scraping-otp.vercel.app](https://scraping-o
   crescente ou decrescente.
 - **Cards de Pokémon** com sprite (com fallback para a inicial do nome), número
   e geração, status individuais em barras e total calculado.
-- **Seleção de Pokémon ("Adicionar")** — cada card pode ser adicionado a uma
-  lista, com o estado persistido na URL (ver a seguir).
-- **URL compartilhável** — os Pokémon adicionados são serializados na URL
-  (`/pokemon?selected=charizard,blaziken`), permitindo compartilhar um "time"
-  pronto; os filtros de TM/MT e habilidade são estado interno da página e
-  voltam ao padrão a cada recarregamento.
-- **Analytics opcional** via Firebase (eventos de abertura, uso de filtro e
-  seleção de Pokémon), com fallback silencioso.
+- **Analytics opcional** via Firebase (eventos de abertura, de uso de filtro e
+  de visualização de resultados), com fallback silencioso.
 - **Pipeline de dados automatizado** com validação cruzada e relatório de
   problemas — sem backend rodando em produção.
 
@@ -99,8 +93,6 @@ o site continua funcionando com a última coleta de dados.
   silêncio.
 - **Frontend tipado de ponta a ponta**: tipos TypeScript compartilhados entre
   scraper e aplicação, com índices em memória para buscas O(1).
-- **URL compartilhável**: seleção serializada em query params e atualizada via
-  `history.replaceState`.
 - **Deploy na Vercel** com `vercel.json` para fallback de SPA (rotas como
   `/pokemon` funcionam em recarregamentos diretos).
 - **Firebase Analytics** com inicialização assíncrona, detecção de suporte no
@@ -205,9 +197,8 @@ src/                frontend React + TypeScript + Vite
   App.tsx           entry point da SPA
   analytics.ts      inicialização do Firebase Analytics (isolada)
   components/       StoreToolbar, PokemonStoreCard, Sprite
-  hooks/            useSelection (regras de compatibilidade + URL)
   pages/            Store (página da loja)
-  utils/            compatibility, stats, sprites, abilities, urlState
+  utils/            compatibility, stats, sprites, abilities
   types.ts          tipos compartilhados do frontend
 vercel.json         fallback de SPA no Vercel
 vite.config.ts      configuração do Vite

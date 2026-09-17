@@ -4,12 +4,15 @@ import { comparePokemon } from '../utils/stats';
 import type { SortCriterion } from '../utils/stats';
 import { StoreToolbar } from '../components/StoreToolbar';
 import { PokemonStoreCard } from '../components/PokemonStoreCard';
-import type { Selection } from '../hooks/useSelection';
-import { trackFilterUsed, trackPokemonClicked } from '../analytics';
+import {
+  trackAbilityFilter,
+  trackLoadMore,
+  trackResultView,
+  trackTmFilter,
+} from '../analytics';
 
 interface StoreProps {
   dataset: Dataset;
-  selection: Selection;
 }
 
 const PAGE_SIZE = 90;
@@ -33,7 +36,7 @@ function computeFiltered(
   return [...list].sort((a, b) => comparePokemon(a, b, criteria));
 }
 
-export function Store({ dataset, selection }: StoreProps) {
+export function Store({ dataset }: StoreProps) {
   const [moveFilters, setMoveFilters] = useState<Move[]>([]);
   const [abilityFilters, setAbilityFilters] = useState<string[]>([]);
   const [criteria, setCriteria] = useState<SortCriterion[]>([{ key: 'id', dir: 'asc' }]);
@@ -44,6 +47,16 @@ export function Store({ dataset, selection }: StoreProps) {
     [dataset.pokemon, moveFilters, abilityFilters, criteria],
   );
 
+  useEffect(() => {
+    const sort = criteria.map((c) => `${c.key}:${c.dir}`).join('|');
+    void trackResultView({
+      resultCount: filtered.length,
+      activeFilters: moveFilters.length + abilityFilters.length,
+      sort,
+    });
+    // Só na primeira renderização (impressão inicial dos resultados).
+  }, []);
+
   const handleMoveFiltersChange = (moves: Move[]): void => {
     const resultCount = computeFiltered(
       dataset.pokemon,
@@ -51,9 +64,12 @@ export function Store({ dataset, selection }: StoreProps) {
       abilityFilters,
       criteria,
     ).length;
+    const action = moves.length > moveFilters.length ? 'added' : 'removed';
     setMoveFilters(moves);
-    const tm = moves.map((m) => m.id).join(', ');
-    void trackFilterUsed({ tm, resultCount });
+    const tm = moves
+      .map((m) => (m.type === 'TM' ? m.id : `MT ${m.name}`))
+      .join(' + ');
+    void trackTmFilter({ tm, action, resultCount });
   };
 
   const handleAbilityFiltersChange = (abilities: string[]): void => {
@@ -63,21 +79,15 @@ export function Store({ dataset, selection }: StoreProps) {
       abilities,
       criteria,
     ).length;
+    const previous = new Set(abilityFilters);
+    const next = new Set(abilities);
+    const added = [...next].find((a) => !previous.has(a));
+    const removed = [...previous].find((a) => !next.has(a));
+    const ability = added ?? removed ?? '';
+    const action: 'added' | 'removed' = added ? 'added' : 'removed';
     setAbilityFilters(abilities);
-    const ability = abilities.join(', ');
-    const tm = moveFilters.map((m) => m.id).join(', ');
-    void trackFilterUsed({ tm, ability, resultCount });
+    void trackAbilityFilter({ ability, action, resultCount });
   };
-
-  const handleAddPokemon = (pokemon: Pokemon): void => {
-    void trackPokemonClicked(pokemon.name);
-    selection.selectPokemon(pokemon);
-  };
-
-  const selectedIds = useMemo(
-    () => new Set(selection.selectedPokemon.map((p) => p.id)),
-    [selection.selectedPokemon],
-  );
 
   useEffect(() => {
     setVisibleCount(PAGE_SIZE);
@@ -118,11 +128,7 @@ export function Store({ dataset, selection }: StoreProps) {
           <ul className="store-grid">
             {visible.map((pokemon) => (
               <li key={pokemon.id}>
-                <PokemonStoreCard
-                  pokemon={pokemon}
-                  selected={selectedIds.has(pokemon.id)}
-                  onAdd={handleAddPokemon}
-                />
+                <PokemonStoreCard pokemon={pokemon} />
               </li>
             ))}
           </ul>
@@ -131,7 +137,10 @@ export function Store({ dataset, selection }: StoreProps) {
             <button
               type="button"
               className="store-load-more"
-              onClick={() => setVisibleCount((count) => count + PAGE_SIZE)}
+              onClick={() => {
+                void trackLoadMore({ offset: visibleCount, total: filtered.length });
+                setVisibleCount((count) => count + PAGE_SIZE);
+              }}
             >
               Carregar mais ({remaining} restantes)
             </button>

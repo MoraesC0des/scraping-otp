@@ -2,13 +2,11 @@ import { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Store } from './pages/Store';
 import { loadDataset } from './dataLoader';
-import { useSelection } from './hooks/useSelection';
 import { trackAppOpen } from './analytics';
 import './index.css';
 
 function App() {
   const dataset = loadDataset();
-  const selection = useSelection(dataset);
 
   useEffect(() => {
     void trackAppOpen();
@@ -33,10 +31,7 @@ function App() {
         </header>
 
       <main className="app-main">
-        {selection.notice && (
-          <p className="notice" role="alert">{selection.notice}</p>
-        )}
-        <Store dataset={dataset} selection={selection} />
+        <Store dataset={dataset} />
       </main>
 
       <footer className="app-footer">

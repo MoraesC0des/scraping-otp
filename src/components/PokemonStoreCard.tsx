@@ -4,12 +4,6 @@ import { STAT_OPTIONS, statValue } from '../utils/stats';
 import type { StatKey } from '../utils/stats';
 import { Sprite } from './Sprite';
 
-interface PokemonStoreCardProps {
-  pokemon: Pokemon;
-  selected: boolean;
-  onAdd: (pokemon: Pokemon) => void;
-}
-
 const STAT_ROWS = STAT_OPTIONS.filter(
   (option) => option.key !== 'id' && option.key !== 'total',
 );
@@ -35,21 +29,11 @@ function StatBar({ statKey, pokemon }: { statKey: StatKey; pokemon: Pokemon }) {
   );
 }
 
-export const PokemonStoreCard = memo(function PokemonStoreCard({ pokemon, selected, onAdd }: PokemonStoreCardProps) {
+export const PokemonStoreCard = memo(function PokemonStoreCard({ pokemon }: { pokemon: Pokemon }) {
   const total = statValue(pokemon, 'total');
 
   return (
-    <article className={`store-card${selected ? ' store-card-selected' : ''}`}>
-      <button
-        type="button"
-        className="store-card-add"
-        disabled={selected}
-        onClick={() => onAdd(pokemon)}
-        aria-pressed={selected}
-      >
-        {selected ? '✓ Adicionado' : 'Adicionar'}
-      </button>
-
+    <article className="store-card">
       <div className="store-card-head">
         <Sprite id={pokemon.id} name={pokemon.name} />
         <div className="store-card-id">

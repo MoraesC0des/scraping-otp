@@ -217,19 +217,6 @@ input {
   list-style: none;
 }
 
-/* ---------- Aviso de incompatibilidade ---------- */
-
-.notice {
-  margin: 0;
-  padding: 10px 14px;
-  border-radius: 999px;
-  background: rgba(255, 107, 107, 0.14);
-  border: 1px solid rgba(255, 107, 107, 0.45);
-  color: var(--danger);
-  text-align: center;
-  font-size: 0.92rem;
-}
-
 /* ---------- Chips de filtros selecionados ---------- */
 
 .chip {
@@ -589,35 +576,6 @@ input {
   border-radius: var(--radius);
   padding: 12px;
   box-shadow: var(--shadow);
-}
-
-.store-card-selected {
-  border-color: rgba(124, 232, 124, 0.5);
-}
-
-.store-card-add {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  border: 1px solid var(--border);
-  background: var(--surface-2);
-  color: var(--accent);
-  border-radius: 999px;
-  padding: 4px 10px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.75rem;
-}
-
-.store-card-add:hover:not(:disabled) {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-}
-
-.store-card-add:disabled {
-  color: var(--mt);
-  border-color: rgba(124, 232, 124, 0.4);
-  cursor: default;
 }
 
 .store-card-head {
